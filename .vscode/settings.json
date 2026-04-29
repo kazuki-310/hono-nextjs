@@ -26,5 +26,5 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "cSpell.words": ["hono", "nextjs", "oxfmt", "oxlint"]
+  "cSpell.words": ["hono", "nextjs", "oxfmt", "oxlint", "usecase"]
 }

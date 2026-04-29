@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["import", "promise", "typescript", "vitest"],
+  "env": {
+    "node": true,
+    "browser": true
+  },
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "no-default-export": "error",
+    "no-console": "error",
+    "typescript/explicit-function-return-type": "off"
+  },
+  "overrides": [
+    {
+      "files": ["apps/web/**/*.{ts,tsx}"],
+      "plugins": ["react", "react-perf", "jsx-a11y"]
+    },
+    {
+      "files": [
+        "**/page.tsx",
+        "**/layout.tsx",
+        "**/loading.tsx",
+        "**/error.tsx",
+        "**/not-found.tsx",
+        "**/default.tsx",
+        "apps/api/src/index.ts",
+        "**/next.config.js",
+        "**/next.config.ts",
+        "**/prisma.config.ts",
+        "**/postcss.config.mjs"
+      ],
+      "rules": {
+        "no-default-export": "off"
+      }
+    },
+    {
+      "files": ["**/error.tsx"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
+}

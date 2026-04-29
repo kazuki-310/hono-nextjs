@@ -1,0 +1,22 @@
+services:
+  rdb:
+    image: mysql:8.0.45
+    container_name: hono-nextjs
+    environment:
+      MYSQL_USER: user
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: hono_nextjs
+      TZ: UTC
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - type: volume
+        source: hono-nextjs-rdb
+        target: /var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  hono-nextjs-rdb:
+    name: hono-nextjs-rdb
+    driver: local

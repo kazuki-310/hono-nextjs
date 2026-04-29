@@ -1,0 +1,32 @@
+{
+  "name": "@packages/database",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./enums": "./generated/prisma/enums.ts"
+  },
+  "scripts": {
+    "prisma:db:pull": "prisma db pull",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:seed": "prisma db seed",
+    "prisma:studio": "prisma studio",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "7.5.0",
+    "@prisma/client": "7.5.0",
+    "bcrypt": "6.0.0",
+    "dotenv": "17.3.1",
+    "prisma": "7.5.0"
+  },
+  "devDependencies": {
+    "@packages/typescript-config": "workspace:*",
+    "@types/bcrypt": "6.0.0",
+    "@types/node": "25.3.3",
+    "tsx": "4.21.0",
+    "typescript": "6.0.2"
+  }
+}

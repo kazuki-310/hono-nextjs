@@ -1,20 +1,33 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
-  runtime  = "workerd"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-model Todo {
+model Project {
   id        String   @id
-  title     String   @db.VarChar(120)
-  completed Boolean  @default(false)
+  name      String   @db.VarChar(100)
+  todos     Todo[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([createdAt])
+  @@map("projects")
+}
+
+model Todo {
+  id        String   @id
+  title     String   @db.VarChar(120)
+  completed Boolean  @default(false)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([projectId])
   @@map("todos")
 }

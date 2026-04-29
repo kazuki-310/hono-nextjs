@@ -1,6 +1,7 @@
 import type { CompleteTodoUseCase } from "../application/usecase/complete-todo";
 import type { CreateTodoUseCase } from "../application/usecase/create-todo";
 import type { ListTodosUseCase } from "../application/usecase/list-todos";
+import { ProjectNotFoundError } from "../domain/model/project";
 import { TodoValidationError } from "../domain/model/todo";
 import { presentTodo, presentTodos } from "./todo-presenter";
 
@@ -23,7 +24,12 @@ export class TodoController {
     if (body === null) return { status: 400, body: { message: "title is required" } };
 
     const result = await createTodo(body, this.dependencies.createTodo);
-    if (!result.created) return { status: 400, body: { message: result.message } };
+    if (!result.created) {
+      if (result.reason === "project_not_found") {
+        return { status: 404, body: { message: "Project not found" } };
+      }
+      return { status: 400, body: { message: result.message } };
+    }
 
     return { status: 201, body: presentTodo(result.todo) };
   }
@@ -41,30 +47,45 @@ export type TodoResponse = {
 };
 
 async function createTodo(
-  body: { title: string },
+  body: { title: string; projectId?: string },
   useCase: CreateTodoUseCase,
 ): Promise<CreateTodoResult> {
   try {
     return { created: true, todo: await useCase.execute(body) };
   } catch (error) {
-    if (error instanceof TodoValidationError) return { created: false, message: error.message };
+    if (error instanceof TodoValidationError) {
+      return { created: false, reason: "validation", message: error.message };
+    }
+    if (error instanceof ProjectNotFoundError) {
+      return { created: false, reason: "project_not_found" };
+    }
     throw error;
   }
 }
 
 type CreateTodoResult =
   | { created: true; todo: Awaited<ReturnType<CreateTodoUseCase["execute"]>> }
-  | { created: false; message: string };
+  | { created: false; reason: "validation"; message: string }
+  | { created: false; reason: "project_not_found" };
 
-async function readCreateTodoBody(request: Request): Promise<{ title: string } | null> {
+async function readCreateTodoBody(
+  request: Request,
+): Promise<{ title: string; projectId?: string } | null> {
   const body = await request.json().catch(() => null);
   if (!isCreateTodoBody(body)) return null;
-  return { title: body.title };
+  return { title: body.title, projectId: body.projectId };
 }
 
-function isCreateTodoBody(body: unknown): body is { title: string } {
+function isCreateTodoBody(body: unknown): body is { title: string; projectId?: string } {
   if (typeof body !== "object" || body === null) return false;
   if (!Object.hasOwn(body, "title")) return false;
   const candidate = body as Record<string, unknown>;
-  return typeof candidate.title === "string";
+  if (typeof candidate.title !== "string") return false;
+  if (
+    Object.hasOwn(candidate, "projectId") &&
+    typeof candidate.projectId !== "string"
+  ) {
+    return false;
+  }
+  return true;
 }

@@ -1,3 +1,7 @@
+import { ProjectId } from "./project";
+
+export { ProjectId };
+
 export class TodoId {
   private constructor(private readonly value: string) {}
 
@@ -34,18 +38,29 @@ export class Todo {
     private readonly id: TodoId,
     private readonly title: TodoTitle,
     private readonly completed: boolean,
+    private readonly projectId?: ProjectId,
   ) {}
 
-  static createNew(id: string, title: string): Todo {
-    return new Todo(TodoId.create(id), TodoTitle.create(title), false);
+  static createNew(id: string, title: string, projectId?: string): Todo {
+    return new Todo(
+      TodoId.create(id),
+      TodoTitle.create(title),
+      false,
+      projectId !== undefined ? ProjectId.create(projectId) : undefined,
+    );
   }
 
-  static restore(id: string, title: string, completed: boolean): Todo {
-    return new Todo(TodoId.create(id), TodoTitle.create(title), completed);
+  static restore(id: string, title: string, completed: boolean, projectId?: string): Todo {
+    return new Todo(
+      TodoId.create(id),
+      TodoTitle.create(title),
+      completed,
+      projectId !== undefined ? ProjectId.create(projectId) : undefined,
+    );
   }
 
   complete(): Todo {
-    return new Todo(this.id, this.title, true);
+    return new Todo(this.id, this.title, true, this.projectId);
   }
 
   isCompleted(): boolean {
@@ -57,6 +72,7 @@ export class Todo {
       id: this.id.toString(),
       title: this.title.toString(),
       completed: this.completed,
+      projectId: this.projectId?.toString(),
     };
   }
 }
@@ -65,6 +81,7 @@ export type TodoSnapshot = {
   id: string;
   title: string;
   completed: boolean;
+  projectId?: string;
 };
 
 export class TodoValidationError extends Error {

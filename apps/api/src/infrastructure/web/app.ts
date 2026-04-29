@@ -2,13 +2,19 @@ import { Hono } from "hono";
 import type { Context } from "hono";
 
 import { CompleteTodoUseCase } from "../../application/usecase/complete-todo";
+import { CreateProjectUseCase } from "../../application/usecase/create-project";
 import { CreateTodoUseCase } from "../../application/usecase/create-todo";
+import { ListProjectsUseCase } from "../../application/usecase/list-projects";
+import { ListTodosByProjectUseCase } from "../../application/usecase/list-todos-by-project";
 import { ListTodosUseCase } from "../../application/usecase/list-todos";
+import type { ProjectRepository } from "../../domain/repository/project-repository";
 import type { TodoRepository } from "../../domain/repository/todo-repository";
+import { createProjectRoutes } from "./project-routes";
 import { createTodoRoutes } from "./todo-routes";
 
 export type AppDependencies = {
   todoRepository: TodoRepository;
+  projectRepository: ProjectRepository;
   dispose?: () => Promise<void>;
 };
 
@@ -35,11 +41,20 @@ export function createAppWithDependencies(dependenciesProvider: AppDependenciesP
   });
 
   app.get("/", (c) => c.text("Hello Hono!"));
+
   app.route(
     "/todos",
     createTodoRoutes((c) => {
-      const dependencies = resolveDependencies(c, dependenciesProvider, dependenciesByContext);
-      return createTodoUseCases(dependencies.todoRepository);
+      const deps = resolveDependencies(c, dependenciesProvider, dependenciesByContext);
+      return createTodoUseCases(deps.todoRepository, deps.projectRepository);
+    }),
+  );
+
+  app.route(
+    "/projects",
+    createProjectRoutes((c) => {
+      const deps = resolveDependencies(c, dependenciesProvider, dependenciesByContext);
+      return createProjectUseCases(deps.projectRepository, deps.todoRepository);
     }),
   );
 
@@ -61,10 +76,21 @@ function resolveDependencies(
   return dependencies;
 }
 
-function createTodoUseCases(todoRepository: TodoRepository) {
+function createTodoUseCases(todoRepository: TodoRepository, projectRepository: ProjectRepository) {
   return {
-    createTodo: new CreateTodoUseCase(todoRepository),
+    createTodo: new CreateTodoUseCase(todoRepository, projectRepository),
     listTodos: new ListTodosUseCase(todoRepository),
     completeTodo: new CompleteTodoUseCase(todoRepository),
+  };
+}
+
+function createProjectUseCases(
+  projectRepository: ProjectRepository,
+  todoRepository: TodoRepository,
+) {
+  return {
+    createProject: new CreateProjectUseCase(projectRepository),
+    listProjects: new ListProjectsUseCase(projectRepository),
+    listTodosByProject: new ListTodosByProjectUseCase(todoRepository, projectRepository),
   };
 }

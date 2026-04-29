@@ -1,5 +1,6 @@
 import { createPrismaClient } from "@packages/database";
 
+import { PrismaProjectRepository } from "../prisma/prisma-project-repository";
 import { PrismaTodoRepository } from "../prisma/prisma-todo-repository";
 import { createAppWithDependencies } from "./app";
 
@@ -14,6 +15,7 @@ export const app = createAppWithDependencies((c) => {
 
   return {
     todoRepository: new PrismaTodoRepository(prisma),
+    projectRepository: new PrismaProjectRepository(prisma),
     dispose: () => prisma.$disconnect(),
   };
 });

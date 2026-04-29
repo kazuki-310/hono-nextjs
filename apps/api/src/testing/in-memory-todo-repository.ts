@@ -1,3 +1,4 @@
+import type { ProjectId } from "../domain/model/project";
 import { Todo, TodoId } from "../domain/model/todo";
 import type { TodoRepository } from "../domain/repository/todo-repository";
 
@@ -21,5 +22,11 @@ export class InMemoryTodoRepository implements TodoRepository {
 
   async findAll(): Promise<Todo[]> {
     return [...this.todos.values()];
+  }
+
+  async findByProjectId(projectId: ProjectId): Promise<Todo[]> {
+    return [...this.todos.values()].filter(
+      (todo) => todo.snapshot().projectId === projectId.toString(),
+    );
   }
 }

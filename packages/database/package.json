@@ -9,6 +9,7 @@
   },
   "scripts": {
     "prisma:db:pull": "prisma db pull",
+    "prisma:db:reset": "prisma migrate reset",
     "prisma:generate": "prisma generate",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",

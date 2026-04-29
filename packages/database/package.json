@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./client": "./src/client.ts",
     "./enums": "./generated/prisma/enums.ts"
   },
   "scripts": {
@@ -16,10 +17,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@prisma/adapter-mariadb": "7.5.0",
+    "@prisma/adapter-pg": "7.5.0",
     "@prisma/client": "7.5.0",
     "bcrypt": "6.0.0",
     "dotenv": "17.3.1",
+    "pg": "8.16.3",
     "prisma": "7.5.0"
   },
   "devDependencies": {

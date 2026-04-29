@@ -11,6 +11,7 @@
     "prisma:generate": "pnpm --filter database prisma:generate",
     "prisma:migrate:dev": "pnpm --filter database prisma:migrate:dev",
     "start": "pnpm --filter web start",
+    "test": "turbo run test",
     "type-check": "turbo run type-check"
   },
   "devDependencies": {

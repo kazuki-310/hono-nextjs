@@ -1,0 +1,23 @@
+{
+  "name": "api",
+  "type": "module",
+  "scripts": {
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "deploy": "wrangler deploy --minify",
+    "dev": "wrangler dev",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@packages/database": "workspace:*",
+    "hono": "^4.12.15"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260426.1",
+    "@packages/typescript-config": "workspace:*",
+    "@types/node": "25.6.0",
+    "typescript": "5.9.2",
+    "vitest": "4.1.5",
+    "wrangler": "^4.4.0"
+  }
+}
